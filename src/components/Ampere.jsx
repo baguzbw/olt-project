@@ -26,7 +26,7 @@ const Ampere = () => {
     ampere: item.arus,
   }));
 
-  // Extract the latest arus value for display
+  
   const latestArusValue = sensorData.length > 0 ? sensorData[0].arus : "Loading...";
 
   return (

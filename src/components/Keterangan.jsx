@@ -20,13 +20,11 @@ export default function Keterangan() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-wrap justify-start gap-4">
       {[...Array(deviceCount)].map((_, index) => (
-        <div key={index} className="space-x-2">
-          <Link to={`/device/${index + 1}`} className="text-black font-semibold hover:text-gray-300">
-            Device {index + 1}
-          </Link>
-        </div>
+        <Link key={index} to={`/device/${index + 1}`} className="bg-white text-lg text-[#A78BFA] px-12 py-4 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+          Device {index + 1}
+        </Link>
       ))}
     </div>
   );
