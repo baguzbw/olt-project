@@ -12,7 +12,7 @@ const Device = () => {
       <div className="">
         <Sidebar />
       </div>
-      <div className="w-3/4 p-4">
+      <div className="w-3/4 p-2">
         <Fragment>
           <Information />
           <Watt />

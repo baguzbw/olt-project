@@ -19,14 +19,21 @@ const Volt = () => {
         console.error("Error fetching data:", error);
       }
     };
+
     fetchData();
+
+    const interval = setInterval(() => {
+      fetchData();
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [id]);
 
   const chartData = sensorData.map((item) => ({
     tegangan: item.tegangan,
+    createdAt: new Date(item.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   }));
 
-  
   const latestTeganganValue = sensorData.length > 0 ? sensorData[0].tegangan : "Loading...";
 
   return (
@@ -36,10 +43,10 @@ const Volt = () => {
           Tegangan
           <div className="text-5xl text-start font-bold text-[#A78BFA] mt-2">{latestTeganganValue} V</div>
         </div>
-        <div className="ml-28 flex-grow">
-          <LineChart width={700} height={200} data={chartData}>
+        <div className="flex-grow">
+          <LineChart width={1000} height={200} data={chartData} margin={{ top: 5, right: 120, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="createdAt" />
             <YAxis />
             <Tooltip />
             <Line type="monotone" dataKey="tegangan" stroke="#A78BFA" strokeWidth={2} dot={false} />

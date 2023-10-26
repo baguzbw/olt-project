@@ -9,32 +9,32 @@ const Information = () => {
   const [sensorData, setSensorData] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}device/get/${id}`)
-      .then(response => {
+    axios
+      .get(`${API_BASE_URL}device/get/${id}`)
+      .then((response) => {
         if (response.data && response.data.data) {
           setDeviceData(response.data.data);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching device data:", error);
       });
 
-
-    axios.get(`${API_BASE_URL}sensor/get/${id}`)
-      .then(response => {
+    axios
+      .get(`${API_BASE_URL}sensor/get/${id}`)
+      .then((response) => {
         if (response.data && Array.isArray(response.data.data)) {
           setSensorData(response.data.data[0]);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching sensor data:", error);
       });
-
   }, [id]);
 
   return (
     <div className="font-poppins flex flex-row justify-center p-4">
-      <div className="rounded-lg shadow-md bg-white p-6 w-full max-w-6xl flex flex-row items-center">
+      <div className="rounded-lg shadow-md bg-white p-6 w-full max-w-full flex flex-row items-center">
         <div className="text-3xl text-black font-semibold">
           Information
           <div className="text-lg text-start font-semibold text-[#A78BFA] mt-4">
@@ -44,7 +44,7 @@ const Information = () => {
             Lokasi : <span className="font-bold">{deviceData ? deviceData.location : "Loading..."}</span>
           </div>
         </div>
-        <div className="ms-64 flex-grow">
+        <div className="ms-96 flex-grow">
           <div className="text-3xl text-black font-semibold">
             Suhu
             <div className="text-5xl text-start font-bold text-[#A78BFA] mt-8 ">{sensorData ? sensorData.suhu + " C" : "Loading..."}</div>
