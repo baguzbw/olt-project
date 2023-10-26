@@ -34,7 +34,7 @@ const Watt = () => {
     createdAt: new Date(item.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   }));
 
-  const latestDayaValue = sensorData.length > 0 ? sensorData[0].daya : "Loading...";
+  const latestDayaValue = sensorData.length > 0 ? sensorData[0].daya : "...";
 
   return (
     <div className="font-poppins flex flex-row justify-center p-4">

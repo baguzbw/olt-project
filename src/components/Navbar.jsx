@@ -1,12 +1,13 @@
-import { Link } from "react-router-dom";
-import Cleon from "../components/assets/logo_cleon.png";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Navbar = () => {
   return (
-    <nav>
-      <Link to="/" className="text-white hover:text-gray-300 p-10">
-        <img src={Cleon} alt="Logo" className="h-1/12 w-1/12 ms-8 cursor-pointer" />
-      </Link>
+    <nav className="flex items-center justify-between flex-wrap bg-[#A78BFA] p-6">
+      <div className="flex-grow"></div>
+      <div className="flex items-center">
+        <FontAwesomeIcon icon={faUser} className="text-white mr-4" size="2x" href="/" />
+      </div>
     </nav>
   );
 };

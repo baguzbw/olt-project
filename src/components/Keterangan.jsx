@@ -5,6 +5,7 @@ import { API_BASE_URL } from "../config";
 
 export default function Keterangan() {
   const [deviceCount, setDeviceCount] = useState(0);
+  const [activeDevice, setActiveDevice] = useState(0);
 
   useEffect(() => {
     axios
@@ -22,7 +23,7 @@ export default function Keterangan() {
   return (
     <div className="flex flex-wrap justify-start gap-4">
       {[...Array(deviceCount)].map((_, index) => (
-        <Link key={index} to={`/device/${index + 1}`} className="bg-white text-lg text-[#A78BFA] px-12 py-4 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+        <Link key={index} to={`/device/${index + 1}`} className={`text-lg py-2 px-12 rounded-lg ${activeDevice === index ? "bg-[#A78BFA] text-white" : "hover:bg-gray-200"}`} onClick={() => setActiveDevice(index)}>
           Device {index + 1}
         </Link>
       ))}

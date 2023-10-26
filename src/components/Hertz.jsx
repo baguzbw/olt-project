@@ -34,7 +34,7 @@ const Energi = () => {
     createdAt: new Date(item.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   }));
 
-  const latestEnergiValue = sensorData.length > 0 ? sensorData[0].energi : "Loading...";
+  const latestEnergiValue = sensorData.length > 0 ? sensorData[0].energi : "...";
 
   return (
     <div className="font-poppins flex flex-row justify-center p-4">

@@ -38,16 +38,16 @@ const Information = () => {
         <div className="text-3xl text-black font-semibold">
           Information
           <div className="text-lg text-start font-semibold text-[#A78BFA] mt-4">
-            Device ID : <span className="font-bold">{deviceData ? deviceData.name : "Loading..."}</span>
+            Device ID : <span className="font-bold">{deviceData ? deviceData.name : "..."}</span>
           </div>
           <div className="text-lg text-start font-semibold text-[#A78BFA] mt-2">
-            Lokasi : <span className="font-bold">{deviceData ? deviceData.location : "Loading..."}</span>
+            Lokasi : <span className="font-bold">{deviceData ? deviceData.location : "..."}</span>
           </div>
         </div>
         <div className="ms-96 flex-grow">
           <div className="text-3xl text-black font-semibold">
             Suhu
-            <div className="text-5xl text-start font-bold text-[#A78BFA] mt-8 ">{sensorData ? sensorData.suhu + " C" : "Loading..."}</div>
+            <div className="text-5xl text-start font-bold text-[#A78BFA] mt-8 ">{sensorData ? sensorData.suhu + " C" : "..."}</div>
           </div>
         </div>
       </div>

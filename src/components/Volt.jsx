@@ -34,7 +34,7 @@ const Volt = () => {
     createdAt: new Date(item.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   }));
 
-  const latestTeganganValue = sensorData.length > 0 ? sensorData[0].tegangan : "Loading...";
+  const latestTeganganValue = sensorData.length > 0 ? sensorData[0].tegangan : "...";
 
   return (
     <div className="font-poppins flex flex-row justify-center p-4">

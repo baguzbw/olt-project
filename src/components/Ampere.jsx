@@ -34,7 +34,7 @@ const Ampere = () => {
     createdAt: new Date(item.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   }));
 
-  const latestArusValue = sensorData.length > 0 ? sensorData[0].arus : "Loading...";
+  const latestArusValue = sensorData.length > 0 ? sensorData[0].arus : "...";
 
   return (
     <div className="font-poppins flex flex-row justify-center p-4">
