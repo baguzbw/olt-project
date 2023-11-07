@@ -1,14 +1,31 @@
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Device from "./Device";
-import Navbar from "./components/Navbar";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
     <Router>
-      <Navbar />
       <Routes>
-        <Route path="/device/:id" element={<Device />} />
-        <Route index element={<Navigate to="/device/1" />} />
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/device/:id"
+          element={
+            <PrivateRoute>
+              <Device />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/login" element={<Login />} />
+        <Route index element={<Navigate to="/home" />} />
       </Routes>
     </Router>
   );

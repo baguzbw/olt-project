@@ -1,5 +1,7 @@
 import axios from "axios";
+import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import { useParams } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
@@ -32,25 +34,45 @@ const Information = () => {
       });
   }, [id]);
 
+  let latitude = "...";
+  let longitude = "...";
+
+  if (deviceData && deviceData.latitude && deviceData.longitude) {
+    latitude = parseFloat(deviceData.latitude).toFixed(4);
+    longitude = parseFloat(deviceData.longitude).toFixed(4);
+  }
+
   return (
-    <div className="font-poppins flex flex-row justify-center p-4">
-      <div className="rounded-lg shadow-md bg-white p-6 w-full max-w-full flex flex-row items-center">
-        <div className="text-3xl text-black font-semibold">
-          Information
-          <div className="text-lg text-start font-semibold text-[#A78BFA] mt-4">
-            Device ID : <span className="font-bold">{deviceData ? deviceData.name : "..."}</span>
+    <div className="font-poppins flex flex-col justify-center p-4 mt-6">
+      <div className="rounded-lg shadow-md bg-white p-6 w-full max-w-full mb-4 flex">
+        <div className="flex-grow">
+          <div className="text-3xl mb-4 text-black font-semibold">Information</div>
+          <div className="text-lg text-start font-semibold text-[#A78BFA]">
+            Name : <span className="font-bold">{deviceData ? deviceData.name : "..."}</span>
           </div>
           <div className="text-lg text-start font-semibold text-[#A78BFA] mt-2">
-            Lokasi : <span className="font-bold">{deviceData ? deviceData.location : "..."}</span>
+            Location : <span className="font-bold">{deviceData ? deviceData.location : "..."}</span>
+          </div>
+          <div className="text-lg text-start font-semibold text-[#A78BFA] mt-2">
+            Latitude : <span className="font-bold">{deviceData ? deviceData.latitude : "..."}</span>
+          </div>
+          <div className="text-lg text-start font-semibold text-[#A78BFA] mt-2">
+            Longitude : <span className="font-bold">{deviceData ? deviceData.longitude : "..."}</span>
           </div>
         </div>
-        <div className="ms-96 flex-grow">
-          <div className="text-3xl text-black font-semibold">
-            Suhu
-            <div className="text-5xl text-start font-bold text-[#A78BFA] mt-8 ">{sensorData ? sensorData.suhu + " C" : "..."}</div>
-          </div>
+        <div className="flex-grow">
+          <div className="text-3xl mt-2 text-black font-semibold">Suhu</div>
+          <div className="text-5xl text-start font-bold text-[#A78BFA] mt-8">{sensorData ? sensorData.suhu + " C" : "..."}</div>
         </div>
       </div>
+      {latitude !== "..." && longitude !== "..." && (
+        <div className="mt-4">
+          <MapContainer className="rounded-xl" center={[parseFloat(latitude), parseFloat(longitude)]} zoom={10} style={{ height: "400px", width: "100%" }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
+            <Marker position={[parseFloat(latitude), parseFloat(longitude)]}></Marker>
+          </MapContainer>
+        </div>
+      )}
     </div>
   );
 };
