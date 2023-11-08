@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
@@ -24,9 +25,14 @@ const UpdateDeviceModal = ({ device, setShowModal, setDeviceData, API_BASE_URL }
       latitude: latitude,
       longitude: longitude,
     };
+    const apiKey = Cookies.get("token");
 
     axios
-      .patch(`${API_BASE_URL}device/update/${device.deviceId}`, devicePayload)
+      .patch(`${API_BASE_URL}device/update/${device.deviceId}`, devicePayload, {
+        params: {
+          apiKey: apiKey,
+        },
+      })
       .then((response) => {
         console.log("Update successful:", response.data);
         setDeviceData((prevData) => prevData.map((d) => (d.deviceId === device.deviceId ? { ...d, ...response.data } : d)));

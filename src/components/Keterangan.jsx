@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -18,8 +19,13 @@ export default function Keterangan() {
   const [position, setPosition] = useState([-7.5634, 110.8559]);
 
   useEffect(() => {
+    const apiKey = Cookies.get("token");
     axios
-      .get(`${API_BASE_URL}device/all`)
+      .get(`${API_BASE_URL}device/all`, {
+        params: {
+          apiKey: apiKey,
+        },
+      })
       .then((response) => {
         if (response.data && Array.isArray(response.data.data)) {
           setDevices(response.data.data);
@@ -37,9 +43,14 @@ export default function Keterangan() {
       latitude: latitude,
       longitude: longitude,
     };
+    const apiKey = Cookies.get("token");
 
     axios
-      .post(`${API_BASE_URL}device/create`, devicePayload)
+      .post(`${API_BASE_URL}device/create`, devicePayload, {
+        params: {
+          apiKey: apiKey,
+        },
+      })
       .then((response) => {
         console.log("Device created successfully:", response.data);
         setShowModal(false);
@@ -129,8 +140,11 @@ export default function Keterangan() {
         <Link
           key={index}
           to={`/device/${device.deviceId}`}
-          className={`text-lg py-2 px-12 rounded-lg shadow-sm transition duration-300 ${activeDevice === device.deviceId ? "bg-purple-500 text-white" : "bg-white hover:bg-gray-100"}`}
+          className={`text-lg py-2 px-6 md:px-12 min-w-[175px]  w-auto rounded-lg shadow-sm transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg ${
+            activeDevice === device.deviceId ? "bg-purple-500 text-white" : "bg-white text-gray-800 hover:bg-gray-100"
+          }`}
           onClick={() => setActiveDevice(device.deviceId)}
+          style={{ textAlign: "center" }} 
         >
           {device.name}
         </Link>

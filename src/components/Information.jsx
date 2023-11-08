@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
@@ -11,8 +12,13 @@ const Information = () => {
   const [sensorData, setSensorData] = useState(null);
 
   useEffect(() => {
+    const apiKey = Cookies.get("token");
     axios
-      .get(`${API_BASE_URL}device/get/${id}`)
+      .get(`${API_BASE_URL}device/get/${id}`, {
+        params: {
+          apiKey: apiKey,
+        },
+      })
       .then((response) => {
         if (response.data && response.data.data) {
           setDeviceData(response.data.data);
@@ -23,7 +29,11 @@ const Information = () => {
       });
 
     axios
-      .get(`${API_BASE_URL}sensor/get/${id}`)
+      .get(`${API_BASE_URL}sensor/get/${id}`, {
+        params: {
+          apiKey: apiKey,
+        },
+      })
       .then((response) => {
         if (response.data && Array.isArray(response.data.data)) {
           setSensorData(response.data.data[0]);

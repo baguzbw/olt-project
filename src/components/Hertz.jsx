@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
@@ -10,8 +11,13 @@ const Energi = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const apiKey = Cookies.get("token");
       try {
-        const response = await axios.get(`${API_BASE_URL}sensor/get/${id}`);
+        const response = await axios.get(`${API_BASE_URL}sensor/get/${id}`, {
+          params: {
+            apiKey: apiKey,
+          },
+        });
         if (response.data && response.data.data) {
           setSensorData(response.data.data);
         }

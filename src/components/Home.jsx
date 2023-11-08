@@ -1,14 +1,15 @@
 import { faEdit, faEye, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import Cookies from "js-cookie";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { isAdmin } from "./Auth";
-import UpdateDeviceModal from "./UpdateDeviceModal";
 import Navbar from "./Navbar";
+import UpdateDeviceModal from "./UpdateDeviceModal";
 
 const Home = () => {
   const { id } = useParams();
@@ -17,10 +18,16 @@ const Home = () => {
   const [currentDevice, setCurrentDevice] = useState(null);
 
   const handleDelete = (deviceId) => {
+    const apiKey = Cookies.get("token");
+
     const confirmDelete = window.confirm("Are you sure you want to delete this device?");
     if (confirmDelete) {
       axios
-        .delete(`${API_BASE_URL}device/remove/${deviceId}`)
+        .delete(`${API_BASE_URL}device/remove/${deviceId}`, {
+          params: {
+            apiKey: apiKey,
+          },
+        })
         .then((response) => {
           if (response.status === 200) {
             setDeviceData((prevData) => prevData.filter((device) => device.deviceId !== deviceId));
@@ -39,8 +46,13 @@ const Home = () => {
   };
 
   useEffect(() => {
+    const apiKey = Cookies.get("token");
     axios
-      .get(`${API_BASE_URL}device/all`)
+      .get(`${API_BASE_URL}device/all`, {
+        params: {
+          apiKey: apiKey,
+        },
+      })
       .then((response) => {
         if (response.data && Array.isArray(response.data.data)) {
           setDeviceData(response.data.data);
