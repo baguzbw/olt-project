@@ -97,7 +97,7 @@ export default function Keterangan() {
     <div className="flex flex-wrap justify-start gap-4">
       {showCreateDeviceButton && (
         <button
-          className="text-lg py-2 px-12 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500 shadow-md transform transition duration-300 hover:scale-105"
+          className="text-lg py-2 px-4 md:px-12 w-full sm:w-auto rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500 shadow-md transform transition duration-300 hover:scale-105"
           onClick={() => setShowModal(true)}
         >
           Create Device
@@ -140,11 +140,10 @@ export default function Keterangan() {
         <Link
           key={index}
           to={`/device/${device.deviceId}`}
-          className={`text-lg py-2 px-6 md:px-12 min-w-[175px]  w-auto rounded-lg shadow-sm transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg ${
+          className={`text-lg py-2 px-6 min-w-[175px] text-center md:px-12 w-full md:w-auto rounded-lg shadow-sm transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg ${
             activeDevice === device.deviceId ? "bg-purple-500 text-white" : "bg-white text-gray-800 hover:bg-gray-100"
           }`}
           onClick={() => setActiveDevice(device.deviceId)}
-          style={{ textAlign: "center" }} 
         >
           {device.name}
         </Link>

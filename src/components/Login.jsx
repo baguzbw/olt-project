@@ -20,6 +20,7 @@ function Login() {
       });
       const { data } = response.data;
 
+      Cookies.set("userId", data.userId, { expires: 7, secure: true });
       Cookies.set("token", data.token, { expires: 7, secure: true });
       Cookies.set("role", data.role, { expires: 7, secure: true });
 

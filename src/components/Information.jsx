@@ -53,32 +53,38 @@ const Information = () => {
   }
 
   return (
-    <div className="font-poppins flex flex-col justify-center p-4 mt-6">
-      <div className="rounded-lg shadow-md bg-white p-6 w-full max-w-full mb-4 flex">
+    <div className="font-poppins flex flex-col justify-center px-4 mt-10">
+      <div className="rounded-lg shadow-md bg-white p-6 w-full mb-4 flex flex-col md:flex-row">
         <div className="flex-grow">
-          <div className="text-3xl mb-4 text-black font-semibold">Information</div>
-          <div className="text-lg text-start font-semibold text-[#A78BFA]">
+          <div className="text-2xl md:text-3xl mb-4 text-black font-semibold">Information</div>
+          <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA]">
+            Device ID : <span className="font-bold">{deviceData ? deviceData.deviceId : "..."}</span>
+          </div>
+          <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA] mt-2">
             Name : <span className="font-bold">{deviceData ? deviceData.name : "..."}</span>
           </div>
-          <div className="text-lg text-start font-semibold text-[#A78BFA] mt-2">
+          <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA] mt-2">
+            API Key : <span className="font-bold">{deviceData ? deviceData.apiKey : "..."}</span>
+          </div>
+          <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA] mt-2">
             Location : <span className="font-bold">{deviceData ? deviceData.location : "..."}</span>
           </div>
-          <div className="text-lg text-start font-semibold text-[#A78BFA] mt-2">
-            Latitude : <span className="font-bold">{deviceData ? deviceData.latitude : "..."}</span>
+          <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA] mt-2">
+            Latitude : <span className="font-bold">{latitude}</span>
           </div>
-          <div className="text-lg text-start font-semibold text-[#A78BFA] mt-2">
-            Longitude : <span className="font-bold">{deviceData ? deviceData.longitude : "..."}</span>
+          <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA] mt-2">
+            Longitude : <span className="font-bold">{longitude}</span>
           </div>
         </div>
-        <div className="flex-grow">
-          <div className="text-3xl mt-2 text-black font-semibold">Suhu</div>
-          <div className="text-5xl text-start font-bold text-[#A78BFA] mt-8">{sensorData ? sensorData.suhu + " C" : "..."}</div>
+        <div className="flex-grow mt-6 md:mt-0">
+          <div className="text-2xl md:text-3xl text-black font-semibold">Suhu</div>
+          <div className="text-4xl md:text-5xl text-start font-bold text-[#A78BFA] mt-8">{sensorData ? `${sensorData.suhu} C` : "..."}</div>
         </div>
       </div>
       {latitude !== "..." && longitude !== "..." && (
-        <div className="mt-4">
+        <div className="mt-2">
           <MapContainer className="rounded-xl" center={[parseFloat(latitude), parseFloat(longitude)]} zoom={10} style={{ height: "400px", width: "100%" }}>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <Marker position={[parseFloat(latitude), parseFloat(longitude)]}></Marker>
           </MapContainer>
         </div>

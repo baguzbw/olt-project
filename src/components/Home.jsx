@@ -90,6 +90,7 @@ const Home = () => {
                   <tr className="text-left text-gray-700 uppercase bg-gray-100">
                     <th className="px-6 py-3">Device ID</th>
                     <th className="px-6 py-3">Name</th>
+                    <th className="px-6 py-3">API KEY</th>
                     <th className="px-6 py-3">Location</th>
                     <th className="px-6 py-3">Latitude</th>
                     <th className="px-6 py-3">Longitude</th>
@@ -101,6 +102,7 @@ const Home = () => {
                     <tr key={device.deviceId} className={`bg-white ${index % 2 === 0 ? "bg-opacity-50" : ""} hover:bg-gray-50`}>
                       <td className="px-6 py-4">{device.deviceId}</td>
                       <td className="px-6 py-4">{device.name}</td>
+                      <td className="px-6 py-4">{device.apiKey}</td>
                       <td className="px-6 py-4">{device.location}</td>
                       <td className="px-6 py-4">{device.latitude}</td>
                       <td className="px-6 py-4">{device.longitude}</td>
