@@ -2,6 +2,9 @@ import { faEdit, faEye, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import Cookies from "js-cookie";
+import L from "leaflet";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -63,6 +66,11 @@ const Home = () => {
       });
   }, [id]);
 
+  const defaultIcon = new L.Icon({
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+  });
+
   return (
     <div className="h-screen w-screen font-poppins">
       <Navbar />
@@ -73,7 +81,7 @@ const Home = () => {
               <MapContainer className="rounded-xl" center={[parseFloat(deviceData[0].latitude), parseFloat(deviceData[0].longitude)]} zoom={12} style={{ height: "400px", width: "100%" }}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {deviceData.map((device) => (
-                  <Marker key={device.deviceId} position={[parseFloat(device.latitude), parseFloat(device.longitude)]}>
+                  <Marker key={device.deviceId} position={[parseFloat(device.latitude), parseFloat(device.longitude)]} icon={defaultIcon}>
                     <Popup>
                       Nama : {device.name}
                       <div>
