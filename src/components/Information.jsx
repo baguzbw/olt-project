@@ -1,5 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import L from "leaflet";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -52,6 +55,15 @@ const Information = () => {
     longitude = parseFloat(deviceData.longitude).toFixed(4);
   }
 
+  const customIcon = new L.Icon({
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
   return (
     <div className="font-poppins flex flex-col justify-center px-4 mt-10">
       <div className="rounded-lg shadow-md bg-white p-6 w-full mb-4 flex flex-col md:flex-row">
@@ -88,8 +100,7 @@ const Information = () => {
         <div className="mt-2">
           <MapContainer className="rounded-xl" center={[parseFloat(latitude), parseFloat(longitude)]} zoom={10} style={{ height: "400px", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <Marker position={[parseFloat(latitude), parseFloat(longitude)]}>
-              {" "}
+            <Marker position={[parseFloat(latitude), parseFloat(longitude)]} icon={customIcon}>
               <Popup>
                 <div className="mb-2">{deviceData.location}</div>
                 {latitude},{longitude}
