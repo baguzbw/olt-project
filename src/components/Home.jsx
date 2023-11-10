@@ -71,7 +71,7 @@ const Home = () => {
           <>
             <div className="mt-4 mb-8">
               <MapContainer className="rounded-xl" center={[parseFloat(deviceData[0].latitude), parseFloat(deviceData[0].longitude)]} zoom={12} style={{ height: "400px", width: "100%" }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright"></a>' />
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {deviceData.map((device) => (
                   <Marker key={device.deviceId} position={[parseFloat(device.latitude), parseFloat(device.longitude)]}>
                     <Popup>
