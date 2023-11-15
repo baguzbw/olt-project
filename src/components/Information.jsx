@@ -93,12 +93,12 @@ const Information = () => {
           <div className="text-2xl md:text-3xl text-black font-semibold">Suhu</div>
           <div className="text-4xl md:text-5xl text-start font-bold text-[#A78BFA] mt-2">{sensorData ? `${sensorData.suhu} C` : "..."}</div>
           <div className="text-2xl md:text-3xl text-black font-semibold mt-6">Kelembapan</div>
-          <div className="text-4xl md:text-5xl text-start font-bold text-[#A78BFA] mt-2">{sensorData ? `${sensorData.suhu} C` : "..."}</div>
+          <div className="text-4xl md:text-5xl text-start font-bold text-[#A78BFA] mt-2">{sensorData ? `${sensorData.kelembapan} Rh` : "..."}</div>
         </div>
       </div>
       {latitude !== "..." && longitude !== "..." && (
         <div className="mt-2">
-          <MapContainer className="rounded-xl" center={[parseFloat(latitude), parseFloat(longitude)]} zoom={10} style={{ height: "400px", width: "100%" }}>
+          <MapContainer className="rounded-xl" center={[parseFloat(latitude), parseFloat(longitude)]} zoom={9} style={{ height: "400px", width: "100%" }} scrollWheelZoom={false} dragging={false}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <Marker position={[parseFloat(latitude), parseFloat(longitude)]} icon={customIcon}>
               <Popup>
