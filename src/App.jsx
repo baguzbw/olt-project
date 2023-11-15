@@ -2,8 +2,10 @@ import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-d
 import Device from "./Device";
 import Home from "./components/Home";
 import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/Profile";
+import SensorDetail from "./components/SensorDetail";
 
 function App() {
   return (
@@ -26,10 +28,26 @@ function App() {
           }
         />
         <Route
+          path="/dashboard/:id"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/device/:id"
           element={
             <PrivateRoute>
               <Device />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/sensor-detail/:sensorType"
+          element={
+            <PrivateRoute>
+              <SensorDetail />
             </PrivateRoute>
           }
         />

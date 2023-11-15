@@ -1,0 +1,6 @@
+.fixed-size {
+  width: 800px;
+  height: 480px;
+  box-sizing: border-box;
+  overflow: auto;
+}
