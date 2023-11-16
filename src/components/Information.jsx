@@ -29,6 +29,7 @@ const Information = () => {
       .then((response) => {
         if (response.data && response.data.data) {
           setDeviceData(response.data.data);
+          setIsSwitchOn(response.data.data.status);
         }
       })
       .catch((error) => {
@@ -73,7 +74,29 @@ const Information = () => {
   });
 
   const toggleSwitch = () => {
-    setIsSwitchOn(!isSwitchOn);
+    const newStatus = !isSwitchOn;
+
+    axios
+      .patch(
+        `${API_BASE_URL}device/update/${id}`,
+        {
+          status: newStatus,
+        },
+        {
+          params: {
+            apiKey: Cookies.get("token"),
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data && response.data.data) {
+          setIsSwitchOn(response.data.data.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating device status:", error);
+        setIsSwitchOn(!newStatus);
+      });
   };
 
   return (
