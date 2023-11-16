@@ -52,10 +52,17 @@ const Dashboard = () => {
     <div className={`${styles["fixed-size"]} bg-gray-200 p-4 overflow-hidden shadow-lg`}>
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2 mb-4">
-          <div className="bg-gradient-to-r from-gray-500 to-gray-700 p-4 text-center rounded-xl text-white text-lg shadow">
-            <h2 className="font-bold text-xl mb-1">{deviceData.name}</h2>
-            <div>{deviceData.deviceId}</div>
-            <div>{deviceData.apiKey}</div>
+          <div className="bg-gradient-to-r from-gray-600 to-gray-800 p-4 rounded-xl text-white text-lg shadow">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="font-bold text-xl mb-1">{deviceData.name}</h2>
+                <div>{deviceData.deviceId}</div>
+                <div>{deviceData.apiKey}</div>
+              </div>
+              <div className="p-2 text-sm font-semibold border-white border rounded-2xl">
+                {deviceData.latitude} , {deviceData.longitude}
+              </div>
+            </div>
           </div>
         </div>
         <div onClick={() => goToSensorDetail("suhu")} className="cursor-pointer bg-gradient-to-br from-purple-500 to-indigo-600 p-3 rounded-xl text-white text-center shadow-lg transform transition duration-500 hover:scale-105">
