@@ -49,7 +49,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className={`${styles["fixed-size"]} bg-gray-200 p-3 overflow-hidden shadow-lg`}>
+    <div className={`${styles["fixed-size"]} bg-gray-200 p-4 overflow-hidden shadow-lg`}>
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2 mb-4">
           <div className="bg-gradient-to-r from-gray-500 to-gray-600 p-4 text-center rounded-xl text-white text-lg shadow">

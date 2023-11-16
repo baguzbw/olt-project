@@ -16,6 +16,7 @@ const Information = () => {
   const [deviceData, setDeviceData] = useState(null);
   const [sensorData, setSensorData] = useState(null);
   const [showApiKey, setShowApiKey] = useState(false);
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
 
   useEffect(() => {
     const apiKey = Cookies.get("token");
@@ -71,11 +72,25 @@ const Information = () => {
     shadowSize: [41, 41],
   });
 
+  const toggleSwitch = () => {
+    setIsSwitchOn(!isSwitchOn);
+  };
+
   return (
     <div className="font-poppins flex flex-col justify-center px-4 mt-10">
       <div className="rounded-lg shadow-md bg-white p-6 w-full mb-4 flex flex-col md:flex-row">
         <div className="flex-grow">
           <div className="text-2xl md:text-3xl mb-4 text-black font-semibold">Information</div>
+          <div className="switch-container mt-4">
+            <label htmlFor="toggle" className="flex items-center cursor-pointer">
+              <div className="relative">
+                {/* Switch */}
+                <input id="toggle" type="checkbox" className="sr-only" checked={isSwitchOn} onChange={toggleSwitch} />
+                <div className={`block w-14 h-8 rounded-full transition duration-300 ease-in-out ${isSwitchOn ? "bg-green-500" : "bg-gray-600"}`}></div>
+                <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transform transition duration-300 ease-in-out ${isSwitchOn ? "translate-x-6" : ""}`}></div>
+              </div>
+            </label>
+          </div>
           <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA] mt-4">
             Device ID : <span className="font-bold">{deviceData ? deviceData.deviceId : "..."}</span>
           </div>
