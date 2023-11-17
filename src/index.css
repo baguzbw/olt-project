@@ -19,11 +19,6 @@
   -webkit-text-size-adjust: 100%;
 }
 
-.fixed-size {
-  width: 800px;
-  height: 480px;
-}
-
 a {
   font-weight: 500;
   color: #646cff;

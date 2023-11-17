@@ -19,13 +19,8 @@ export default function Keterangan() {
   const [position, setPosition] = useState([-7.5634, 110.8559]);
 
   useEffect(() => {
-    const apiKey = Cookies.get("token");
     axios
-      .get(`${API_BASE_URL}device/all`, {
-        params: {
-          apiKey: apiKey,
-        },
-      })
+      .get(`${API_BASE_URL}device/all`)
       .then((response) => {
         if (response.data && Array.isArray(response.data.data)) {
           setDevices(response.data.data);

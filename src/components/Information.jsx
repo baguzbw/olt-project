@@ -19,37 +19,29 @@ const Information = () => {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
 
   useEffect(() => {
-    const apiKey = Cookies.get("token");
-    axios
-      .get(`${API_BASE_URL}device/get/${id}`, {
-        params: {
-          apiKey: apiKey,
-        },
-      })
-      .then((response) => {
-        if (response.data && response.data.data) {
-          setDeviceData(response.data.data);
-          setIsSwitchOn(response.data.data.status);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching device data:", error);
-      });
+    const fetchAllDevicesData = async () => {
+      try {
+        const allDevicesResponse = await axios.get(`${API_BASE_URL}device/all`);
+        const device = allDevicesResponse.data.data.find((d) => d.deviceId === id);
+        if (device) {
+          const deviceApiKey = device.apiKey;
+          const deviceResponse = await axios.get(`${API_BASE_URL}device/get/${id}?apiKey=${deviceApiKey}`);
+          if (deviceResponse.data && deviceResponse.data.data) {
+            setDeviceData(deviceResponse.data.data);
+            setIsSwitchOn(deviceResponse.data.data.status);
+          }
 
-    axios
-      .get(`${API_BASE_URL}sensor/get/${id}`, {
-        params: {
-          apiKey: apiKey,
-        },
-      })
-      .then((response) => {
-        if (response.data && Array.isArray(response.data.data)) {
-          setSensorData(response.data.data[0]);
+          const sensorResponse = await axios.get(`${API_BASE_URL}sensor/get/${id}?apiKey=${deviceApiKey}`);
+          if (sensorResponse.data && Array.isArray(sensorResponse.data.data)) {
+            setSensorData(sensorResponse.data.data[0]);
+          }
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching sensor data:", error);
-      });
+      } catch (error) {
+        console.error("Error fetching device data:", error);
+      }
+    };
+
+    fetchAllDevicesData();
   }, [id]);
 
   const toggleApiKeyVisibility = () => {

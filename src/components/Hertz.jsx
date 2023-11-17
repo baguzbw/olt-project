@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
@@ -11,15 +10,18 @@ const Energi = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const apiKey = Cookies.get("token");
       try {
-        const response = await axios.get(`${API_BASE_URL}sensor/get/${id}`, {
-          params: {
-            apiKey: apiKey,
-          },
-        });
-        if (response.data && response.data.data) {
-          setSensorData(response.data.data);
+        const devicesResponse = await axios.get(`${API_BASE_URL}device/all`);
+        const device = devicesResponse.data.data.find((d) => d.deviceId === id);
+        if (device) {
+          const deviceApiKey = device.apiKey;
+          const response = await axios.get(`${API_BASE_URL}sensor/get/${id}`, {
+            params: { apiKey: deviceApiKey },
+          });
+
+          if (response.data && response.data.data) {
+            setSensorData(response.data.data);
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -27,11 +29,7 @@ const Energi = () => {
     };
 
     fetchData();
-
-    const interval = setInterval(() => {
-      fetchData();
-    }, 1000);
-
+    const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
   }, [id]);
 
@@ -47,7 +45,7 @@ const Energi = () => {
       <div className="rounded-lg shadow-md bg-white p-6 w-full max-w-full flex flex-row items-center">
         <div className="text-3xl text-black font-semibold">
           Energi
-          <div className="text-5xl text-start font-bold text-[#A78BFA] mt-2">{latestEnergiValue} wh</div>
+          <div className="text-5xl text-start font-bold text-[#A78BFA] mt-2">{latestEnergiValue} Wh</div>
         </div>
         <div className="ml-14 flex-grow">
           <LineChart width={1000} height={200} data={chartData} margin={{ top: 5, right: 120, left: 20, bottom: 5 }}>

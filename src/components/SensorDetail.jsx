@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
-import styles from "./Dashboard.module.css";
+
 
 const SensorDetail = () => {
   const location = useLocation();
@@ -12,7 +12,7 @@ const SensorDetail = () => {
   }));
 
   return (
-    <div className={`${styles["fixed-size"]} bg-gray-200 p-4 overflow-hidden shadow-lg rounded-xl flex justify-center items-center`}>
+    <div className="h-screen w-screen bg-gray-200 p-4 overflow-hidden shadow-lg rounded-xl flex justify-center items-center">
       <div className="card bg-white rounded-xl overflow-hidden shadow-md">
         <h2 className="text-center text-black font-bold text-2xl mb-8 py-4">{sensorType.charAt(0).toUpperCase() + sensorType.slice(1)} Data</h2>
         <div className="flex justify-center items-center p-4">

@@ -49,13 +49,8 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const apiKey = Cookies.get("token");
     axios
-      .get(`${API_BASE_URL}device/all`, {
-        params: {
-          apiKey: apiKey,
-        },
-      })
+      .get(`${API_BASE_URL}device/all`)
       .then((response) => {
         if (response.data && Array.isArray(response.data.data)) {
           setDeviceData(response.data.data);

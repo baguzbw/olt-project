@@ -1,9 +1,7 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../config";
-import styles from "./Dashboard.module.css";
 
 const Dashboard = () => {
   const { id } = useParams();
@@ -12,25 +10,36 @@ const Dashboard = () => {
   const [sensorData, setSensorData] = useState([]);
 
   const fetchData = useCallback(() => {
-    const apiKey = Cookies.get("token");
-
     axios
-      .get(`${API_BASE_URL}device/get/${id}`, { params: { apiKey } })
-      .then((response) => {
-        if (response.data && response.data.data) {
-          setDeviceData(response.data.data);
+      .get(`${API_BASE_URL}device/all`)
+      .then((allDevicesResponse) => {
+        const device = allDevicesResponse.data.data.find((d) => d.deviceId === id);
+        if (device) {
+          const deviceApiKey = device.apiKey;
+          setDeviceData(device); 
+
+          axios
+            .get(`${API_BASE_URL}device/get/${id}`, { params: { apiKey: deviceApiKey } })
+            .then((deviceResponse) => {
+              if (deviceResponse.data && deviceResponse.data.data) {
+                setDeviceData(deviceResponse.data.data);
+              }
+            })
+            .catch((error) => console.error("Error fetching device data:", error));
+
+          axios
+            .get(`${API_BASE_URL}sensor/get/${id}`, { params: { apiKey: deviceApiKey } })
+            .then((sensorResponse) => {
+              if (sensorResponse.data && Array.isArray(sensorResponse.data.data)) {
+                setSensorData(sensorResponse.data.data);
+              }
+            })
+            .catch((error) => console.error("Error fetching sensor data:", error));
         }
       })
-      .catch((error) => console.error("Error fetching device data:", error));
-
-    axios
-      .get(`${API_BASE_URL}sensor/get/${id}`, { params: { apiKey } })
-      .then((response) => {
-        if (response.data && Array.isArray(response.data.data)) {
-          setSensorData(response.data.data);
-        }
-      })
-      .catch((error) => console.error("Error fetching sensor data:", error));
+      .catch((error) => {
+        console.error("Error fetching all devices data:", error);
+      });
   }, [id]);
 
   useEffect(() => {
@@ -49,7 +58,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className={`${styles["fixed-size"]} bg-gray-200 p-4 overflow-hidden shadow-lg`}>
+    <div className="h-screen w-screen bg-gray-200 p-6 overflow-hidden shadow-lg">
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2 mb-4">
           <div className="bg-gradient-to-r from-gray-600 to-gray-800 p-4 rounded-xl text-white text-lg shadow">
