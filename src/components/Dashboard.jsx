@@ -58,7 +58,7 @@ const Dashboard = () => {
 
   const findLatestData = (sensorType) => {
     const latestEntry = sensorData[0] || {};
-    return latestEntry[sensorType] || "N/A";
+    return latestEntry[sensorType] || "0.0";
   };
 
   return (

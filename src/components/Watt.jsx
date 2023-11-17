@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { AreaChart, CartesianGrid, Area, Tooltip, XAxis, YAxis } from "recharts";
 import { API_BASE_URL } from "../config";
 
 const Watt = () => {
@@ -48,13 +48,13 @@ const Watt = () => {
           <div className="text-5xl text-start font-bold text-[#A78BFA] mt-2">{latestDayaValue} W</div>
         </div>
         <div className="ml-20 flex-grow">
-          <LineChart width={1000} height={200} data={chartData} margin={{ top: 5, right: 120, left: 20, bottom: 5 }}>
+          <AreaChart width={1000} height={200} data={chartData} margin={{ top: 5, right: 120, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="createdAt" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="daya" stroke="#A78BFA" strokeWidth={2} dot={false} />
-          </LineChart>
+            <Area type="monotone" dataKey="daya" stroke="#A78BFA" fill="#A78BFA" />
+          </AreaChart>
         </div>
       </div>
     </div>
