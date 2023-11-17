@@ -27,14 +27,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/dashboard/:id"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
+
         <Route
           path="/device/:id"
           element={
@@ -43,14 +36,8 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/sensor-detail/:sensorType"
-          element={
-            <PrivateRoute>
-              <SensorDetail />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/dashboard/:id" element={<Dashboard />} />
+        <Route path="/sensor-detail/:sensorType" element={<SensorDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Login />} />
         <Route index element={<Navigate to="/home" />} />

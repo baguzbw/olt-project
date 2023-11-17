@@ -1,3 +1,5 @@
+import { faClock, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,6 +10,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [deviceData, setDeviceData] = useState({ name: "", deviceId: "", apiKey: "" });
   const [sensorData, setSensorData] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   const fetchData = useCallback(() => {
     axios
@@ -16,7 +19,7 @@ const Dashboard = () => {
         const device = allDevicesResponse.data.data.find((d) => d.deviceId === id);
         if (device) {
           const deviceApiKey = device.apiKey;
-          setDeviceData(device); 
+          setDeviceData(device);
 
           axios
             .get(`${API_BASE_URL}device/get/${id}`, { params: { apiKey: deviceApiKey } })
@@ -32,6 +35,7 @@ const Dashboard = () => {
             .then((sensorResponse) => {
               if (sensorResponse.data && Array.isArray(sensorResponse.data.data)) {
                 setSensorData(sensorResponse.data.data);
+                setLastUpdated(new Date());
               }
             })
             .catch((error) => console.error("Error fetching sensor data:", error));
@@ -61,40 +65,56 @@ const Dashboard = () => {
     <div className="h-screen w-screen bg-gray-200 p-6 overflow-hidden shadow-lg">
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2 mb-4">
-          <div className="bg-gradient-to-r from-gray-600 to-gray-800 p-4 rounded-xl text-white text-lg shadow">
+          <div className="bg-gradient-to-r from-gray-600 to-gray-800 p-6 rounded-xl text-white text-lg shadow-lg">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="font-bold text-xl mb-1">{deviceData.name}</h2>
-                <div>{deviceData.deviceId}</div>
-                <div>{deviceData.apiKey}</div>
+                <div className="text-white">
+                  <h2 className="font-bold text-2xl text-white mb-2">{deviceData.name}</h2>
+                  <div className="flex items-center text-white mb-1">
+                    <span className="text-lg">{deviceData.deviceId}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-lg text-white">{deviceData.apiKey}</span>
+                  </div>
+                </div>
               </div>
-              <div className="p-2 text-sm font-semibold border-white border rounded-2xl">
-                {deviceData.latitude} , {deviceData.longitude}
+              <div className="p-2 text-sm text-right">
+                <div className="items-center mb-2">
+                  <FontAwesomeIcon className="mr-2 " icon={faMapMarkerAlt} />
+                  <span className="text-sm text-right">
+                    {deviceData.latitude}, {deviceData.longitude}
+                  </span>
+                </div>
+                <div className=" items-center">
+                  <FontAwesomeIcon className="mr-2 text-sm" icon={faClock} />
+                  <span className="text-sm text-end">Latest Updates</span>
+                </div>
+                <div className="mt-2  text-xl font-bold ">{lastUpdated ? new Date(lastUpdated).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Loading..."}</div>
               </div>
             </div>
           </div>
         </div>
-        <div onClick={() => goToSensorDetail("suhu")} className="cursor-pointer bg-gradient-to-br from-purple-500 to-indigo-600 p-3 rounded-xl text-white text-center shadow-lg transform transition duration-500 hover:scale-105">
+        <div onClick={() => goToSensorDetail("suhu")} className="cursor-pointer bg-gradient-to-br from-purple-500 to-indigo-600 p-8 md:p-4 rounded-xl text-white text-center shadow-lg transform transition duration-500 ">
           <p className="font-bold">Suhu</p>
           <p className="text-4xl font-semibold">{findLatestData("suhu")} C</p>
         </div>
-        <div onClick={() => goToSensorDetail("kelembapan")} className="bg-gradient-to-br from-orange-700 to-red-600 p-3 rounded-xl text-white text-center shadow-lg transform transition duration-500 hover:scale-105">
+        <div onClick={() => goToSensorDetail("kelembapan")} className="bg-gradient-to-br from-orange-700 to-red-600 p-8 md:p-4 rounded-xl text-white text-center shadow-lg transform transition duration-500 ">
           <p className="font-bold">Kelembapan</p>
           <p className="text-4xl font-semibold">{findLatestData("kelembapan")} Rh</p>
         </div>
-        <div onClick={() => goToSensorDetail("daya")} className="bg-gradient-to-br from-red-500 to-pink-500 p-3 rounded-xl text-white text-center shadow-lg transform transition duration-500 hover:scale-105">
+        <div onClick={() => goToSensorDetail("daya")} className="bg-gradient-to-br from-red-500 to-pink-500 p-8 md:p-4 rounded-xl text-white text-center shadow-lg transform transition duration-500 ">
           <p className="font-bold">Daya</p>
           <p className="text-4xl font-semibold">{findLatestData("daya")} W</p>
         </div>
-        <div onClick={() => goToSensorDetail("tegangan")} className="bg-gradient-to-br from-green-500 to-teal-500 p-3 rounded-xl text-white text-center shadow-lg transform transition duration-500 hover:scale-105">
+        <div onClick={() => goToSensorDetail("tegangan")} className="bg-gradient-to-br from-green-500 to-teal-500 p-8 md:p-4 rounded-xl text-white text-center shadow-lg transform transition duration-500 ">
           <p className="font-bold">Tegangan</p>
           <p className="text-4xl font-semibold">{findLatestData("tegangan")} V</p>
         </div>
-        <div onClick={() => goToSensorDetail("arus")} className="bg-gradient-to-br from-blue-800 to-blue-300 p-3 rounded-xl text-white text-center shadow-lg transform transition duration-500 hover:scale-105">
+        <div onClick={() => goToSensorDetail("arus")} className="bg-gradient-to-br from-blue-800 to-blue-300 p-8 md:p-4 rounded-xl text-white text-center shadow-lg transform transition duration-500 ">
           <p className="font-bold">Arus</p>
           <p className="text-4xl font-semibold">{findLatestData("arus")} A</p>
         </div>
-        <div onClick={() => goToSensorDetail("energi")} className="bg-gradient-to-br from-yellow-500 to-amber-500 p-3 rounded-xl text-white text-center shadow-lg transform transition duration-500 hover:scale-105">
+        <div onClick={() => goToSensorDetail("energi")} className="bg-gradient-to-br from-yellow-500 to-amber-500 p-8 md:p-4 rounded-xl text-white text-center shadow-lg transform transition duration-500 ">
           <p className="font-bold">Energi</p>
           <p className="text-4xl font-semibold">{findLatestData("energi")} Wh</p>
         </div>
