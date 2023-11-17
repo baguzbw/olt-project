@@ -10,7 +10,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [deviceData, setDeviceData] = useState({ name: "", deviceId: "", apiKey: "" });
   const [sensorData, setSensorData] = useState([]);
-  const [lastUpdated, setLastUpdated] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
 
   const fetchData = useCallback(() => {
     axios
@@ -61,35 +61,45 @@ const Dashboard = () => {
     return latestEntry[sensorType] || "0.0";
   };
 
+  const formatDate = (date) => {
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="h-screen w-screen bg-gray-200 p-6 overflow-hidden shadow-lg">
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2 mb-4">
-          <div className="bg-gradient-to-r from-gray-600 to-gray-800 p-6 rounded-xl text-white text-lg shadow-lg">
+          <div className="bg-gradient-to-r from-gray-600 to-gray-800 p-3 rounded-xl text-white text-lg shadow-lg">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-white">
-                  <h2 className="font-bold text-2xl text-white mb-2">{deviceData.name}</h2>
-                  <div className="flex items-center text-white mb-1">
-                    <span className="text-lg">{deviceData.deviceId}</span>
+                <div className="text-white p-2">
+                  <h2 className="font-bold text-2xl text-white mb-4">{deviceData.name}</h2>
+                  <span className="text-sm">Device ID :</span>
+                  <div className="flex items-center text-white font-semibold">
+                    <span className="text-base">{deviceData.deviceId}</span>
                   </div>
+                  <span className="text-sm">API Key :</span>
                   <div className="flex items-center">
-                    <span className="text-lg text-white">{deviceData.apiKey}</span>
+                    <span className="text-base font-semibold text-white">{deviceData.apiKey}</span>
                   </div>
                 </div>
               </div>
-              <div className="p-2 text-sm text-right">
+              <div className="p-3 text-sm text-right">
                 <div className="items-center mb-2">
-                  <FontAwesomeIcon className="mr-2 " icon={faMapMarkerAlt} />
                   <span className="text-sm text-right">
                     {deviceData.latitude}, {deviceData.longitude}
                   </span>
+                  <FontAwesomeIcon className="ms-2 " icon={faMapMarkerAlt} />
                 </div>
-                <div className=" items-center">
-                  <FontAwesomeIcon className="mr-2 text-sm" icon={faClock} />
-                  <span className="text-sm text-end">Latest Updates</span>
+                <div className="items-center mt-3">
+                  <span className="text-sm text-end">Last Updated</span>
+                  <FontAwesomeIcon className="ms-2 text-sm" icon={faClock} />
                 </div>
-                <div className="mt-2  text-xl font-bold ">{lastUpdated ? new Date(lastUpdated).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Loading..."}</div>
+                <div className="mt-1 text-base font-semibold ">{lastUpdated ? ` ${lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}, ${formatDate(lastUpdated)} ` : "Loading..."}</div>
               </div>
             </div>
           </div>
