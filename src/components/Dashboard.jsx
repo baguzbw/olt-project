@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [deviceData, setDeviceData] = useState({ name: "", deviceId: "", apiKey: "" });
   const [sensorData, setSensorData] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
 
   const fetchData = useCallback(() => {
     axios
@@ -20,7 +21,7 @@ const Dashboard = () => {
         if (device) {
           const deviceApiKey = device.apiKey;
           setDeviceData(device);
-
+          setIsSwitchOn(device.status);
           axios
             .get(`${API_BASE_URL}device/get/${id}`, { params: { apiKey: deviceApiKey } })
             .then((deviceResponse) => {
@@ -69,6 +70,24 @@ const Dashboard = () => {
     });
   };
 
+  const toggleSwitch = () => {
+    const newStatus = !isSwitchOn;
+    setIsSwitchOn(newStatus);
+    const apiKey = deviceData.apiKey;
+
+    axios
+      .patch(`${API_BASE_URL}relay/update/${id}`, { status: newStatus }, { params: { apiKey } })
+      .then((response) => {
+        if (response.data && response.data.data) {
+          setIsSwitchOn(response.data.data.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating device status:", error);
+        setIsSwitchOn(!newStatus);
+      });
+  };
+
   return (
     <div className="h-screen w-screen bg-gray-200 p-6 overflow-hidden shadow-lg">
       <div className="grid grid-cols-2 gap-4">
@@ -78,6 +97,16 @@ const Dashboard = () => {
               <div>
                 <div className="text-white p-2">
                   <h2 className="font-bold text-2xl text-white mb-4">{deviceData.name}</h2>
+                  <div className="switch-container mb-2">
+                    <label htmlFor="toggle" className="cursor-pointer">
+                      <div className="relative">
+                        {/* Switch */}
+                        <input id="toggle" type="checkbox" className="sr-only" checked={isSwitchOn} onChange={toggleSwitch} />
+                        <div className={`block w-14 h-8 rounded-full transition duration-300 ease-in-out ${isSwitchOn ? "bg-green-500" : "bg-gray-700"}`}></div>
+                        <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transform transition duration-300 ease-in-out ${isSwitchOn ? "translate-x-6" : ""}`}></div>
+                      </div>
+                    </label>
+                  </div>
                   <span className="text-sm">Device ID :</span>
                   <div className="flex items-center text-white font-semibold">
                     <span className="text-base">{deviceData.deviceId}</span>

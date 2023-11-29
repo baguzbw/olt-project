@@ -41,7 +41,11 @@ const Information = () => {
       }
     };
 
+    const fetchDataInterval = setInterval(fetchAllDevicesData, 1000);   
     fetchAllDevicesData();
+    return () => {
+      clearInterval(fetchDataInterval);
+    };
   }, [id]);
 
   const toggleApiKeyVisibility = () => {
