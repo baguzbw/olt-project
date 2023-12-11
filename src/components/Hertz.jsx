@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AreaChart, CartesianGrid, Area, Tooltip, XAxis, YAxis } from "recharts";
 import { API_BASE_URL } from "../config";
+import Cookies from "js-cookie";
 
 const Energi = () => {
   const { id } = useParams();
@@ -11,7 +12,8 @@ const Energi = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const devicesResponse = await axios.get(`${API_BASE_URL}device/all`);
+        const apiKey = Cookies.get("token");
+        const devicesResponse = await axios.get(`${API_BASE_URL}device/all?apiKey=${apiKey}`);
         const device = devicesResponse.data.data.find((d) => d.deviceId === id);
         if (device) {
           const deviceApiKey = device.apiKey;

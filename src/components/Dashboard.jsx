@@ -8,43 +8,30 @@ import { API_BASE_URL } from "../config";
 const Dashboard = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [deviceData, setDeviceData] = useState({ name: "", deviceId: "", apiKey: "" });
+  const [deviceData, setDeviceData] = useState({ name: "", deviceId: "", latitude: "", longitude: "" });
   const [sensorData, setSensorData] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isSwitchOn, setIsSwitchOn] = useState(false);
 
-  const fetchData = useCallback(() => {
-    axios
-      .get(`${API_BASE_URL}device/all`)
-      .then((allDevicesResponse) => {
-        const device = allDevicesResponse.data.data.find((d) => d.deviceId === id);
-        if (device) {
-          const deviceApiKey = device.apiKey;
-          setDeviceData(device);
-          setIsSwitchOn(device.status);
-          axios
-            .get(`${API_BASE_URL}device/get/${id}`, { params: { apiKey: deviceApiKey } })
-            .then((deviceResponse) => {
-              if (deviceResponse.data && deviceResponse.data.data) {
-                setDeviceData(deviceResponse.data.data);
-              }
-            })
-            .catch((error) => console.error("Error fetching device data:", error));
+  const fetchData = useCallback(async () => {
+    try {
+      const deviceResponse = await axios.get(`${API_BASE_URL}device/getDashboard/${id}`);
+      const sensorResponse = await axios.get(`${API_BASE_URL}sensor/getDashboard/${id}`);
 
-          axios
-            .get(`${API_BASE_URL}sensor/get/${id}`, { params: { apiKey: deviceApiKey } })
-            .then((sensorResponse) => {
-              if (sensorResponse.data && Array.isArray(sensorResponse.data.data)) {
-                setSensorData(sensorResponse.data.data);
-                setLastUpdated(new Date());
-              }
-            })
-            .catch((error) => console.error("Error fetching sensor data:", error));
+      if (deviceResponse.data && deviceResponse.data.data) {
+        setDeviceData(deviceResponse.data.data);
+        setIsSwitchOn(deviceResponse.data.data.status);
+      }
+
+      if (sensorResponse.data && sensorResponse.data.data) {
+        setSensorData(sensorResponse.data.data);
+        if (sensorResponse.data.data.length > 0) {
+          setLastUpdated(new Date(sensorResponse.data.data[0].updatedAt));
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching all devices data:", error);
-      });
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, [id]);
 
   useEffect(() => {
@@ -72,11 +59,9 @@ const Dashboard = () => {
 
   const toggleSwitch = () => {
     const newStatus = !isSwitchOn;
-    setIsSwitchOn(newStatus);
-    const apiKey = deviceData.apiKey;
 
     axios
-      .patch(`${API_BASE_URL}relay/update/${id}`, { status: newStatus }, { params: { apiKey } })
+      .patch(`${API_BASE_URL}relay/updateDashboard/${id}`, { status: newStatus })
       .then((response) => {
         if (response.data && response.data.data) {
           setIsSwitchOn(response.data.data.status);
@@ -84,7 +69,6 @@ const Dashboard = () => {
       })
       .catch((error) => {
         console.error("Error updating device status:", error);
-        setIsSwitchOn(!newStatus);
       });
   };
 
@@ -110,10 +94,6 @@ const Dashboard = () => {
                   <span className="text-sm">Device ID :</span>
                   <div className="flex items-center text-white font-semibold">
                     <span className="text-base">{deviceData.deviceId}</span>
-                  </div>
-                  <span className="text-sm">API Key :</span>
-                  <div className="flex items-center">
-                    <span className="text-base font-semibold text-white">{deviceData.apiKey}</span>
                   </div>
                 </div>
               </div>

@@ -21,19 +21,25 @@ const Information = () => {
   useEffect(() => {
     const fetchAllDevicesData = async () => {
       try {
-        const allDevicesResponse = await axios.get(`${API_BASE_URL}device/all`);
+        const apiKey = Cookies.get("token");
+        const allDevicesResponse = await axios.get(`${API_BASE_URL}device/all?apiKey=${apiKey}`);
         const device = allDevicesResponse.data.data.find((d) => d.deviceId === id);
         if (device) {
           const deviceApiKey = device.apiKey;
-          const deviceResponse = await axios.get(`${API_BASE_URL}device/get/${id}?apiKey=${deviceApiKey}`);
+
+          const sensorResponse = await axios.get(`${API_BASE_URL}sensor/get/${id}`, {
+            params: { apiKey: deviceApiKey },
+          });
+          if (sensorResponse.data && Array.isArray(sensorResponse.data.data)) {
+            setSensorData(sensorResponse.data.data[0]);
+          }
+
+          const deviceResponse = await axios.get(`${API_BASE_URL}device/get/${id}`, {
+            params: { apiKey: apiKey },
+          });
           if (deviceResponse.data && deviceResponse.data.data) {
             setDeviceData(deviceResponse.data.data);
             setIsSwitchOn(deviceResponse.data.data.status);
-          }
-
-          const sensorResponse = await axios.get(`${API_BASE_URL}sensor/get/${id}?apiKey=${deviceApiKey}`);
-          if (sensorResponse.data && Array.isArray(sensorResponse.data.data)) {
-            setSensorData(sensorResponse.data.data[0]);
           }
         }
       } catch (error) {
@@ -41,7 +47,7 @@ const Information = () => {
       }
     };
 
-    const fetchDataInterval = setInterval(fetchAllDevicesData, 1000);   
+    const fetchDataInterval = setInterval(fetchAllDevicesData, 1000);
     fetchAllDevicesData();
     return () => {
       clearInterval(fetchDataInterval);

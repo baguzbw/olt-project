@@ -19,6 +19,7 @@ const Home = () => {
   const [deviceData, setDeviceData] = useState([]);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [currentDevice, setCurrentDevice] = useState(null);
+  
 
   const handleDelete = (deviceId) => {
     const apiKey = Cookies.get("token");
@@ -49,8 +50,9 @@ const Home = () => {
   };
 
   useEffect(() => {
+    const apiKey = Cookies.get("token");
     axios
-      .get(`${API_BASE_URL}device/all`)
+      .get(`${API_BASE_URL}device/all?apiKey=${apiKey}`)
       .then((response) => {
         if (response.data && Array.isArray(response.data.data)) {
           setDeviceData(response.data.data);
