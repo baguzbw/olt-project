@@ -8,7 +8,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 const Information = () => {
@@ -123,6 +123,9 @@ const Information = () => {
             Name : <span className="font-bold">{deviceData ? deviceData.name : "..."}</span>
           </div>
           <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA] mt-2">
+            Location : <span className="font-bold">{deviceData ? deviceData.location : "..."}</span>
+          </div>
+          <div className="text-base md:text-lg text-start font-semibold text-[#A78BFA] mt-2">
             API Key : {showApiKey ? <span className="font-bold">{deviceData ? deviceData.apiKey : "..."}</span> : <span className="font-bold"> ******-******-******-******</span>}
             <span onClick={toggleApiKeyVisibility} aria-label={showApiKey ? "Show API Key" : "Hide API Key"} className="cursor-pointer ml-2" style={{ color: showApiKey ? "#A78BFA" : "#A78BFA" }}>
               <FontAwesomeIcon icon={showApiKey ? faEyeSlash : faEye} />
@@ -142,8 +145,11 @@ const Information = () => {
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <Marker position={[parseFloat(latitude), parseFloat(longitude)]} icon={customIcon}>
               <Popup>
-                <div className="mb-2">{deviceData.location}</div>
+                <div className="">{deviceData.location}</div>
                 {latitude},{longitude}
+                <div className="mt-2">
+                  <Link to={`/dashboard/${deviceData.deviceId}`}>See Dashboard</Link>
+                </div>
               </Popup>
             </Marker>
           </MapContainer>
