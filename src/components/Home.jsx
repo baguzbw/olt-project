@@ -6,11 +6,12 @@ import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../config";
-import { isAdmin } from "./Auth";
+import { isAdmin, isAuthenticated } from "./Auth";
 import Navbar from "./Navbar";
 import UpdateDeviceModal from "./UpdateDeviceModal";
 
@@ -19,6 +20,13 @@ const Home = () => {
   const [deviceData, setDeviceData] = useState([]);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [currentDevice, setCurrentDevice] = useState(null);
+  const [location, setLocation] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [position, setPosition] = useState([-7.5634, 110.8559]);
+  const [showModal, setShowModal] = useState(false);
+  const [deviceName, setDeviceName] = useState("");
+  const [devices, setDevices] = useState([]);
 
   const handleDelete = (deviceId) => {
     const apiKey = Cookies.get("token");
@@ -67,11 +75,68 @@ const Home = () => {
     shadowUrl: markerShadow,
   });
 
+  DraggableMarker.propTypes = {
+    position: PropTypes.arrayOf(PropTypes.number).isRequired,
+    setPosition: PropTypes.func.isRequired,
+  };
+
+  const showCreateDeviceButton = isAuthenticated() && isAdmin();
+
+  const handleCreateDevice = () => {
+    const devicePayload = {
+      name: deviceName,
+      location: location,
+      latitude: latitude,
+      longitude: longitude,
+    };
+    const apiKey = Cookies.get("token");
+
+    axios
+      .post(`${API_BASE_URL}device/create`, devicePayload, {
+        params: {
+          apiKey: apiKey,
+        },
+      })
+      .then((response) => {
+        console.log("Device created successfully:", response.data);
+        setShowModal(false);
+        setDeviceName("");
+        setLocation("");
+        setLatitude("");
+        setLongitude("");
+        setDevices([...devices, response.data]);
+      })
+      .catch((error) => {
+        console.error("Error creating device:", error);
+      });
+  };
+
+  function DraggableMarker({ position, setPosition }) {
+    const markerRef = useRef(null);
+
+    const eventHandlers = useMemo(
+      () => ({
+        dragend() {
+          const marker = markerRef.current;
+          if (marker != null) {
+            const newPos = marker.getLatLng();
+            setPosition(newPos);
+            setLatitude(newPos.lat.toFixed(4));
+            setLongitude(newPos.lng.toFixed(4));
+          }
+        },
+      }),
+      [setPosition]
+    );
+
+    return <Marker draggable={true} eventHandlers={eventHandlers} position={position} ref={markerRef} />;
+  }
+
   return (
     <div className="h-screen w-screen font-poppins">
       <Navbar />
       <div className="flex flex-col justify-center p-4">
-        <div className="mt-4 mb-8">
+        <div className="mt-4 mb-4">
           <MapContainer className="rounded-xl" center={[-7.556, 110.831]} zoom={8} style={{ height: "400px", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {deviceData.map((device) => (
@@ -86,6 +151,49 @@ const Home = () => {
             ))}
           </MapContainer>
         </div>
+        {showCreateDeviceButton && (
+          <div className="text-left mb-2">
+            <button
+              className="py-2 px-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500 rounded-md text-base text-white shadow-md transform transition duration-300 hover:scale-105"
+              onClick={() => setShowModal(true)}
+            >
+              Create Device
+            </button>
+          </div>
+        )}
+
+        {showModal && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50" style={{ zIndex: 1000 }} onClick={() => setShowModal(false)}>
+            <div className="bg-white p-5 rounded-lg" onClick={(e) => e.stopPropagation()} style={{ zIndex: 2000 }}>
+              <h2 className="mb-4 text-black">Create New Device</h2>
+              <label className="block text-black mb-2">Name:</label>
+              <input className="border rounded mb-2 p-1 w-full" value={deviceName} onChange={(e) => setDeviceName(e.target.value)} />
+
+              <label className="block text-black mb-2">Location:</label>
+              <input className="border rounded mb-2 p-1 w-full" value={location} onChange={(e) => setLocation(e.target.value)} />
+
+              <label className="block text-black mb-2">Coordinate:</label>
+              <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: "300px", width: "100%", marginBottom: "1rem" }}>
+                <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <DraggableMarker position={position} setPosition={setPosition} icon={defaultIcon} />
+              </MapContainer>
+
+              <div className="my-2 text-black">
+                Selected Coordinate: Latitude: {latitude}, Longitude: {longitude}
+              </div>
+
+              <div className="flex justify-between mt-4">
+                <button className="py-1 px-4 bg-blue-500 text-white rounded" onClick={handleCreateDevice}>
+                  Submit
+                </button>
+                <button className="py-1 px-4 bg-red-500 text-white rounded" onClick={() => setShowModal(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="mt-4 overflow-x-auto">
           <table className="min-w-full rounded-xl bg-white shadow-md overflow-hidden border-collapse">
             <thead>

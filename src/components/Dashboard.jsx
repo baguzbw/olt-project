@@ -1,4 +1,4 @@
-import { faClock, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faClock, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
@@ -34,11 +34,35 @@ const Dashboard = () => {
     }
   }, [id]);
 
+  const [isFetching, setIsFetching] = useState(false);
+
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
   }, [fetchData]);
+
+  useEffect(() => {
+    // Check if it's been more than 10 seconds since the last update
+    const now = new Date();
+    const timeDifference = now - lastUpdated;
+
+    if (timeDifference > 10000) {
+      setIsFetching(false);
+    } else {
+      setIsFetching(true);
+    }
+
+    const timeout = setTimeout(() => {
+      if (timeDifference > 10000) {
+        setIsFetching(false);
+      } else {
+        setIsFetching(true);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [lastUpdated]);
 
   const goToSensorDetail = (sensorType) => {
     navigate(`/sensor-detail/${sensorType}`, { state: { sensorData, sensorType } });
@@ -109,6 +133,18 @@ const Dashboard = () => {
                   <FontAwesomeIcon className="ms-2 text-sm" icon={faClock} />
                 </div>
                 <div className="mt-1 text-base font-semibold ">{lastUpdated ? ` ${lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}, ${formatDate(lastUpdated)} ` : "Loading..."}</div>
+                <div className="mt-1 text-base font-semibold ">
+                  {isFetching ? (
+                    <span className="text-green-500">
+                      Active <FontAwesomeIcon className="ms-2 text-sm" icon={faCircle} />
+                    </span>
+                  ) : (
+                    <span className="text-red-500">
+                      Not Active
+                      <FontAwesomeIcon className=" ms-2 text-sm" icon={faCircle} />
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
