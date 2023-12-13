@@ -42,6 +42,7 @@ const Ampere = () => {
   }));
 
   const latestArusValue = sensorData.length > 0 ? sensorData[0].arus : "...";
+  const reversedChartData = [...chartData].reverse();
 
   return (
     <div className="font-poppins flex flex-row justify-center p-4">
@@ -51,7 +52,7 @@ const Ampere = () => {
           <div className="text-5xl text-start font-bold text-[#A78BFA] mt-2">{latestArusValue} A</div>
         </div>
         <div className="ml-20 flex-grow">
-          <AreaChart width={1000} height={200} data={chartData} margin={{ top: 5, right: 120, left: 20, bottom: 5 }}>
+          <AreaChart width={1000} height={200} data={reversedChartData} margin={{ top: 5, right: 120, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="createdAt" />
             <YAxis />
