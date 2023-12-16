@@ -15,8 +15,8 @@ const Dashboard = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const deviceResponse = await axios.get(`${API_BASE_URL}device/getDashboard${id}`);
-      const sensorResponse = await axios.get(`${API_BASE_URL}sensor/getDashboard${id}`);
+      const deviceResponse = await axios.get(`${API_BASE_URL}device/getDashboard/${id}`);
+      const sensorResponse = await axios.get(`${API_BASE_URL}sensor/getDashboard/${id}`);
 
       if (deviceResponse.data && deviceResponse.data.data) {
         setDeviceData(deviceResponse.data.data);
@@ -84,7 +84,7 @@ const Dashboard = () => {
     const newStatus = !isSwitchOn;
 
     axios
-      .patch(`${API_BASE_URL}relay/updateDashboard${id}`, { status: newStatus })
+      .patch(`${API_BASE_URL}relay/updateDashboard/${id}`, { status: newStatus })
       .then((response) => {
         if (response.data && response.data.data) {
           setIsSwitchOn(response.data.data.status);
