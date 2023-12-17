@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [sensorData, setSensorData] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -23,24 +24,27 @@ const Dashboard = () => {
         setIsSwitchOn(deviceResponse.data.data.status);
       }
 
-      if (sensorResponse.data && sensorResponse.data.data) {
+      if (sensorResponse.data && sensorResponse.data.data && sensorResponse.data.data.length > 0) {
         setSensorData(sensorResponse.data.data);
-        if (sensorResponse.data.data.length > 0) {
-          setLastUpdated(new Date(sensorResponse.data.data[0].updatedAt));
-        }
+        setLastUpdated(new Date(sensorResponse.data.data[0].updatedAt));
+      } else {
+        setSensorData([]);
+        setLastUpdated(null);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }, [id]);
 
-  const [isFetching, setIsFetching] = useState(false);
-
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
   }, [fetchData]);
+
+  useEffect(() => {
+    setIsFetching(sensorData.length > 0);
+  }, [sensorData]);
 
   useEffect(() => {
     const now = new Date();
@@ -131,7 +135,7 @@ const Dashboard = () => {
                   <span className="text-sm text-end">Last Updated</span>
                   <FontAwesomeIcon className="ms-2 text-sm" icon={faClock} />
                 </div>
-                <div className="mt-1 text-base font-semibold ">{lastUpdated ? ` ${lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}, ${formatDate(lastUpdated)} ` : "Loading..."}</div>
+                <div className="mt-1 text-base font-semibold ">{lastUpdated ? ` ${lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}, ${formatDate(lastUpdated)} ` : "Not Have Data..."}</div>
                 <div className="mt-1 text-base font-semibold ">
                   {isFetching ? (
                     <span className="text-green-500">
