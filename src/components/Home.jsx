@@ -70,9 +70,13 @@ const Home = () => {
       });
   }, [id]);
 
-  const defaultIcon = new L.Icon({
+  const customIcon = new L.Icon({
     iconUrl: markerIcon,
     shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
   });
 
   DraggableMarker.propTypes = {
@@ -129,7 +133,7 @@ const Home = () => {
       [setPosition]
     );
 
-    return <Marker draggable={true} eventHandlers={eventHandlers} position={position} ref={markerRef} />;
+    return <Marker draggable={true} eventHandlers={eventHandlers} position={position} ref={markerRef} icon={customIcon} />;
   }
 
   return (
@@ -140,7 +144,7 @@ const Home = () => {
           <MapContainer className="rounded-xl" center={[-7.556, 110.831]} zoom={8} style={{ height: "400px", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {deviceData.map((device) => (
-              <Marker key={device.deviceId} position={[parseFloat(device.latitude), parseFloat(device.longitude)]} icon={defaultIcon}>
+              <Marker key={device.deviceId} position={[parseFloat(device.latitude), parseFloat(device.longitude)]} icon={customIcon}>
                 <Popup>
                   Nama : {device.name}
                   <div>
@@ -175,7 +179,7 @@ const Home = () => {
               <label className="block text-black mb-2">Coordinate:</label>
               <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: "300px", width: "100%", marginBottom: "1rem" }}>
                 <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <DraggableMarker position={position} setPosition={setPosition} icon={defaultIcon} />
+                <DraggableMarker position={position} setPosition={setPosition} icon={customIcon} />
               </MapContainer>
 
               <div className="my-2 text-black">
