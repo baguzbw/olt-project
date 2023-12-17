@@ -20,9 +20,12 @@ function Login() {
       });
       const { data } = response.data;
 
-      Cookies.set("userId", data.userId, { expires: 7, secure: true });
-      Cookies.set("token", data.token, { expires: 7, secure: true });
-      Cookies.set("role", data.role, { expires: 7, secure: true });
+      const isSecure = window.location.protocol === "https:";
+
+      
+      Cookies.set("userId", data.userId, { expires: 7, secure: isSecure });
+      Cookies.set("token", data.token, { expires: 7, secure: isSecure });
+      Cookies.set("role", data.role, { expires: 7, secure: isSecure });
 
       navigate("/home");
     } catch (error) {
