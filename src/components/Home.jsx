@@ -23,6 +23,11 @@ const Home = () => {
   const [location, setLocation] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [batteryBrand, setBatteryBrand] = useState("");
+  const [voltageNominal, setVoltageNominal] = useState("");
+  const [voltageTop, setVoltageTop] = useState("");
+  const [voltageLow, setVoltageLow] = useState("");
+  const [batteryCapacity, setBatteryCapacity] = useState("");
   const [position, setPosition] = useState([-7.5634, 110.8559]);
   const [showModal, setShowModal] = useState(false);
   const [deviceName, setDeviceName] = useState("");
@@ -92,6 +97,11 @@ const Home = () => {
       location: location,
       latitude: latitude,
       longitude: longitude,
+      batteryBrand: batteryBrand,
+      voltageNominal: voltageNominal,
+      voltageTop: voltageTop,
+      voltageLow: voltageLow,
+      batteryCapacity: batteryCapacity,
     };
     const apiKey = Cookies.get("token");
 
@@ -108,6 +118,11 @@ const Home = () => {
         setLocation("");
         setLatitude("");
         setLongitude("");
+        setBatteryBrand("");
+        setVoltageNominal("");
+        setVoltageTop("");
+        setVoltageLow("");
+        setBatteryCapacity("");
         setDevices([...devices, response.data]);
       })
       .catch((error) => {
@@ -169,12 +184,43 @@ const Home = () => {
         {showModal && (
           <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50" style={{ zIndex: 1000 }} onClick={() => setShowModal(false)}>
             <div className="bg-white p-5 rounded-lg" onClick={(e) => e.stopPropagation()} style={{ zIndex: 2000 }}>
-              <h2 className="mb-4 text-black">Create New Device</h2>
-              <label className="block text-black mb-2">Name:</label>
-              <input className="border rounded mb-2 p-1 w-full" value={deviceName} onChange={(e) => setDeviceName(e.target.value)} />
+              <h2 className="text-lg text-black font-bold mb-4">Create New Device</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-black mb-2">Name:</label>
+                  <input className="border text-black rounded mb-2 p-1 w-full bg-white" value={deviceName} onChange={(e) => setDeviceName(e.target.value)} />
+                </div>
 
-              <label className="block text-black mb-2">Location:</label>
-              <input className="border rounded mb-2 p-1 w-full" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <div>
+                  <label className="block text-black mb-2">Location:</label>
+                  <input className="border text-black rounded mb-2 p-1 w-full bg-white" value={location} onChange={(e) => setLocation(e.target.value)} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-black mb-2">Battery Brand:</label>
+                  <input className="border text-black rounded mb-2 p-1 w-full bg-white" value={batteryBrand} onChange={(e) => setBatteryBrand(e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-black mb-2">Battery Capacity:</label>
+                  <input className="border text-black rounded mb-2 p-1 w-full bg-white" value={batteryCapacity} onChange={(e) => setBatteryCapacity(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-black mb-2">Voltage Nominal:</label>
+                  <input className="border text-black rounded mb-2 p-1 w-full bg-white" value={voltageNominal} onChange={(e) => setVoltageNominal(e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-black mb-2">Voltage Top:</label>
+                  <input className="border text-black rounded mb-2 p-1 w-full bg-white" value={voltageTop} onChange={(e) => setVoltageTop(e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-black mb-2">Voltage Low:</label>
+                  <input className="border text-black rounded mb-2 p-1 w-full bg-white" value={voltageLow} onChange={(e) => setVoltageLow(e.target.value)} />
+                </div>
+              </div>
 
               <label className="block text-black mb-2">Coordinate:</label>
               <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: "300px", width: "100%", marginBottom: "1rem" }}>
@@ -186,12 +232,12 @@ const Home = () => {
                 Selected Coordinate: Latitude: {latitude}, Longitude: {longitude}
               </div>
 
-              <div className="flex justify-between mt-4">
-                <button className="py-1 px-4 bg-blue-500 text-white rounded" onClick={handleCreateDevice}>
-                  Submit
+              <div className="flex justify-end gap-4">
+                <button className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400" onClick={() => setShowModal(false)}>
+                  Cancel
                 </button>
-                <button className="py-1 px-4 bg-red-500 text-white rounded" onClick={() => setShowModal(false)}>
-                  Close
+                <button className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={handleCreateDevice}>
+                  Create
                 </button>
               </div>
             </div>
@@ -207,6 +253,8 @@ const Home = () => {
                 <th className="px-6 py-3">Location</th>
                 <th className="px-6 py-3">Latitude</th>
                 <th className="px-6 py-3">Longitude</th>
+                <th className="px-6 py-3">Battery Brand</th>
+                <th className="px-6 py-3">Battery Capacity</th>
                 <th className="px-6 py-3">Action</th>
               </tr>
             </thead>
@@ -225,6 +273,8 @@ const Home = () => {
                   <td className="px-6 py-4">{device.location}</td>
                   <td className="px-6 py-4">{device.latitude}</td>
                   <td className="px-6 py-4">{device.longitude}</td>
+                  <td className="px-6 py-4">{device.spec_battery?.batteryBrand}</td>
+                  <td className="px-6 py-4">{device.spec_battery?.batteryCapacity}</td>
                   <td className="px-6 py-4 text-center space-x-2">
                     {isAdmin() && (
                       <>

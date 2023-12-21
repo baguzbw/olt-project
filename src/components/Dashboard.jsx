@@ -1,4 +1,4 @@
-import { faCircle, faClock, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCarBattery, faCircle, faClock, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
@@ -8,20 +8,63 @@ import { API_BASE_URL } from "../config";
 const Dashboard = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [deviceData, setDeviceData] = useState({ name: "", deviceId: "", latitude: "", longitude: "" });
+  const [deviceData, setDeviceData] = useState({
+    name: "",
+    deviceId: "",
+    latitude: "",
+    longitude: "",
+    status: false,
+  });
+  const [batteryData, setBatteryData] = useState({
+    batteryBrand: "",
+    voltageNominal: "",
+    voltageTop: "",
+    voltageLow: "",
+  });
   const [sensorData, setSensorData] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+
+  const [latestBatteryData, setLatestBatteryData] = useState({
+    capacityNow: 0,
+    percentageNow: 0,
+    createdAt: null,
+    updatedAt: null,
+  });
 
   const fetchData = useCallback(async () => {
     try {
       const deviceResponse = await axios.get(`${API_BASE_URL}device/getDashboard/${id}`);
       const sensorResponse = await axios.get(`${API_BASE_URL}sensor/getDashboard/${id}`);
 
-      if (deviceResponse.data && deviceResponse.data.data) {
-        setDeviceData(deviceResponse.data.data);
-        setIsSwitchOn(deviceResponse.data.data.status);
+      if (deviceResponse.data && deviceResponse.data.data && deviceResponse.data.data.length > 0) {
+        const deviceInfo = deviceResponse.data.data[0];
+        setDeviceData({
+          name: deviceInfo.name,
+          deviceId: deviceInfo.deviceId,
+          latitude: deviceInfo.latitude,
+          longitude: deviceInfo.longitude,
+          status: deviceInfo.status,
+        });
+        setIsSwitchOn(deviceInfo.status);
+      }
+
+      const batteryInfo = deviceResponse.data.data.find((item) => item.specBatteryId);
+      if (batteryInfo) {
+        setBatteryData({
+          batteryBrand: batteryInfo.batteryBrand,
+          voltageNominal: batteryInfo.voltageNominal,
+          voltageTop: batteryInfo.voltageTop,
+          voltageLow: batteryInfo.voltageLow,
+        });
+      } else {
+        setBatteryData({
+          batteryBrand: "N/A",
+          voltageNominal: "N/A",
+          voltageTop: "N/A",
+          voltageLow: "N/A",
+        });
       }
 
       if (sensorResponse.data && sensorResponse.data.data && sensorResponse.data.data.length > 0) {
@@ -36,11 +79,37 @@ const Dashboard = () => {
     }
   }, [id]);
 
+
+
+  const fetchLatestBatteryData = useCallback(async () => {
+    try {
+      const latestBatteryResponse = await axios.get(`${API_BASE_URL}battery/getDashboard/${id}`);
+
+      if (latestBatteryResponse.data && Array.isArray(latestBatteryResponse.data.data)) {
+        const sortedBatteryData = latestBatteryResponse.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+        const latestData = sortedBatteryData[0] || {};
+        setLatestBatteryData({
+          capacityNow: latestData.capacityNow || 0,
+          percentageNow: latestData.persentageNow || 0,
+          createdAt: latestData.createdAt,
+          updatedAt: latestData.updatedAt,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching latest battery data:", error);
+    }
+  }, [id]);
+
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 1000);
+    fetchLatestBatteryData();
+    const interval = setInterval(() => {
+      fetchData();
+      fetchLatestBatteryData();
+    }, 1000);
     return () => clearInterval(interval);
-  }, [fetchData]);
+  }, [fetchData, fetchLatestBatteryData]);
 
   useEffect(() => {
     setIsFetching(sensorData.length > 0);
@@ -118,10 +187,23 @@ const Dashboard = () => {
                       </div>
                     </label>
                   </div>
-                  <span className="text-sm">Device ID :</span>
-                  <div className="flex items-center text-white font-semibold">
-                    <span className="text-base">{deviceData.deviceId}</span>
-                  </div>
+                  <span className="text-sm">Device ID : {deviceData.deviceId}</span>
+                  <div className="flex items-center text-white font-semibold"></div>
+                  <span className="text-sm">
+                    Battery Brand : <span className="text-base">{batteryData.batteryBrand}</span>
+                  </span>
+                  <div className="flex items-center text-white font-semibold"></div>
+                  <span className="text-sm">
+                    Voltage Nominal : <span className="text-base">{batteryData.voltageNominal} V</span>
+                  </span>
+                  <div className="flex items-center text-white font-semibold"></div>
+                  <span className="text-sm">
+                    Voltage Top : <span className="text-base">{batteryData.voltageTop} V</span>
+                  </span>
+                  <div className="flex items-center text-white font-semibold"></div>
+                  <span className="text-sm">
+                    Voltage Low : <span className="text-base">{batteryData.voltageNominal} V</span>
+                  </span>
                 </div>
               </div>
               <div className="p-3 text-sm text-right">
@@ -136,6 +218,14 @@ const Dashboard = () => {
                   <FontAwesomeIcon className="ms-2 text-sm" icon={faClock} />
                 </div>
                 <div className="mt-1 text-base font-semibold ">{lastUpdated ? ` ${lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}, ${formatDate(lastUpdated)} ` : "Not Have Data..."}</div>
+                <div className="items-center mt-1 font-semibold">
+                  <span className="text-sm text-end">
+                    <span className="ml-1">
+                      {latestBatteryData ? `${latestBatteryData.capacityNow} Ah` : "0"} <FontAwesomeIcon className="text-sm" icon={faCarBattery} />
+                    </span>
+                    <span className="ms-1">{latestBatteryData ? `${latestBatteryData.percentageNow}%` : "0"}</span>
+                  </span>
+                </div>
                 <div className="mt-1 text-base font-semibold ">
                   {isFetching ? (
                     <span className="text-green-500">
