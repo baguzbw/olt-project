@@ -22,9 +22,9 @@ function Login() {
 
       const isSecure = window.location.protocol === "https:";
 
-      Cookies.set("userId", data.userId, { expires: 7, secure: isSecure });
-      Cookies.set("token", data.token, { expires: 7, secure: isSecure });
-      Cookies.set("role", data.role, { expires: 7, secure: isSecure });
+      Cookies.set("userId", data.userId, { secure: isSecure });
+      Cookies.set("token", data.token, { secure: isSecure });
+      Cookies.set("role", data.role, { secure: isSecure });
 
       navigate("/home");
     } catch (error) {
