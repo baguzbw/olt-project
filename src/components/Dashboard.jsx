@@ -119,14 +119,14 @@ const Dashboard = () => {
     const now = new Date();
     const timeDifference = now - lastUpdated;
 
-    if (timeDifference > 10000) {
+    if (timeDifference > 60000) {
       setIsFetching(false);
     } else {
       setIsFetching(true);
     }
 
     const timeout = setTimeout(() => {
-      if (timeDifference > 10000) {
+      if (timeDifference > 60000) {
         setIsFetching(false);
       } else {
         setIsFetching(true);
